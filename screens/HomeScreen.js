@@ -1,5 +1,5 @@
 import React, { Fragment } from 'react'
-import { Text, View, StyleSheet, Alert, Linking } from 'react-native'
+import { Text, View, StyleSheet, Alert, Linking, Clipboard } from 'react-native'
 import { BarCodeScanner, Permissions } from 'expo'
 
 import dbLayer from '../dbLayer'
@@ -54,12 +54,12 @@ export default class HomeScreen extends React.Component {
         },
         {
           text: 'Kopyala',
-          onPress: () => console.log('Cancel Pressed'),
+          onPress: () => Clipboard.setString(data),
           style: 'cancel',
         },
         { text: 'Kaydetmeden çık', onPress: () => dbLayer.deleteLastEntry() },
       ],
-      { cancelable: false },
+      { cancelable: true },
     )
   }
 
