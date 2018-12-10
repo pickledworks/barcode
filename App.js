@@ -1,10 +1,9 @@
 import React from 'react'
 import { StyleSheet, Text, View } from 'react-native'
 
-import dbLayer from './dbLayer'
+import dbLayer from './utils/dbLayer'
 
 import HomeScreen from './screens/HomeScreen'
-import History from './History'
 
 export default class App extends React.Component {
   componentDidMount() {

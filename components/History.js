@@ -1,8 +1,8 @@
 import React, { Component } from "react";
-import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
+import { StyleSheet, Text, View, TouchableOpacity, TouchableHighlight } from "react-native";
 import moment from "moment";
 
-import dbLayer from "./dbLayer";
+import dbLayer from "../utils/dbLayer";
 import { ScrollView } from "react-native-gesture-handler";
 
 export class History extends Component {
@@ -12,7 +12,7 @@ export class History extends Component {
         {
           scannedAt: new Date(),
           content: `${i}`,
-          type: "T"
+          type: 'string'
         },
         null,
         this.refreshData()
@@ -26,7 +26,7 @@ export class History extends Component {
     return (
       <View style={{ flex: 1 }}>
         <TouchableHighlight onPress={onPress}>
-          <Text h4>History</Text>
+          <Text style={styles.text}>History</Text>
         </TouchableHighlight>
         <ScrollView style={styles.container}>
           {entries.map(({ id, scannedAt, content, type }) => (
@@ -56,7 +56,13 @@ const styles = StyleSheet.create({
   },
   entryContainer: {
     marginVertical: 10
+  },
+  text: {
+    fontSize: 36,
+    paddingTop: 10,
+    paddingLeft: 50,
   }
+
 });
 
 export default History;

@@ -9,16 +9,17 @@ import {
 } from "react-native";
 import { BarCodeScanner, Permissions } from "expo";
 
-import dbLayer from "../dbLayer";
-import specifyType from "../specifyType";
+import dbLayer from "../utils/dbLayer";
+import specifyType from "../utils/specifyType";
 
-import History from "../History";
+import History from "../components/History";
 
 export default class HomeScreen extends React.Component {
   state = {
     hasCameraPermission: null,
     entries: [],
-    isAlertActive: false
+    isAlertActive: false,
+    barCodeScannerShow: true,
   };
 
   async componentDidMount() {
@@ -88,7 +89,7 @@ export default class HomeScreen extends React.Component {
   };
 
   onPress = () => {
-    this.setState({ barCodeScannerShow: !barCodeScannerShow });
+    this.setState({ barCodeScannerShow: !this.state.barCodeScannerShow });
   };
 
   render() {
@@ -132,7 +133,7 @@ const styles = StyleSheet.create({
   },
   text: {
     color: "black",
-    fontSize: 20
+    fontSize: 20,
   },
   scrollView: {
     flex: 1,
