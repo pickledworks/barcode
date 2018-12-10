@@ -1,5 +1,5 @@
 import React, { Fragment } from "react";
-import { Text, View, StyleSheet, ScrollView } from "react-native";
+import { Text, View, StyleSheet, ScrollView, Alert } from "react-native";
 import { BarCodeScanner, Permissions } from "expo";
 import Modal from "../components/modal";
 
@@ -18,7 +18,16 @@ export default class HomeScreen extends React.Component {
     this.setState(previousState => ({
       data: [{ type, data }, ...previousState.data]
     }));
-    return <Modal content={this.state.data.data} />;
+    Alert.alert(
+      'Başarılı',
+      'QR Kod Okundu',
+      [
+        {text: 'Linke Git ', onPress: () => console.log('Ask me later pressed')},
+        {text: 'Kopyala', onPress: () => console.log('Cancel Pressed'), style: 'cancel'},
+        {text: 'Kaydemeden çık', onPress: () => console.log('OK Pressed')},
+      ],
+      { cancelable: false }
+    )
   };
 
   render() {
