@@ -3,6 +3,7 @@ import { StyleSheet, Text, View } from 'react-native'
 
 import dbLayer from './dbLayer'
 
+import HomeScreen from './screens/HomeScreen'
 import History from './History'
 
 export default class App extends React.Component {
@@ -13,7 +14,7 @@ export default class App extends React.Component {
   render() {
     return (
       <View style={styles.container}>
-        <History />
+        <HomeScreen />
       </View>
     )
   }
@@ -21,6 +22,7 @@ export default class App extends React.Component {
 
 const styles = StyleSheet.create({
   container: {
+    marginTop: 24,
     flex: 1,
     backgroundColor: '#fff',
     marginTop: 30,
