@@ -10,6 +10,7 @@ export default class HomeScreen extends React.Component {
   state = {
     hasCameraPermission: null,
     entries: [],
+    isAlertActive: false,
   }
 
   async componentDidMount() {
@@ -25,6 +26,8 @@ export default class HomeScreen extends React.Component {
   }
 
   handleBarCodeScanned = async ({ type, data }) => {
+    if (this.state.isAlertActive) return null
+
     this.refreshData()
 
     const entries = (await dbLayer.getEntries().then(data => data)) || []
@@ -44,23 +47,34 @@ export default class HomeScreen extends React.Component {
       this.refreshData(),
     )
 
+    this.setState({ isAlertActive: true })
+
     Alert.alert(
       'Successfully saved',
       data,
       [
         {
           text: 'Go to link',
-          onPress: () => Linking.openURL(data),
+          onPress: () =>
+            this.setState({ isAlertActive: false }) && Linking.openURL(data),
         },
         {
           text: 'Copy as text',
-          onPress: () => Clipboard.setString(data),
+          onPress: () =>
+            this.setState({ isAlertActive: false }) &&
+            Clipboard.setString(data),
         },
         {
           text: 'Delete',
-          onPress: () => dbLayer.deleteLastEntry(this.refreshData()),
+          onPress: () =>
+            this.setState({ isAlertActive: false }) &&
+            dbLayer.deleteLastEntry(this.refreshData()),
         },
-        { text: 'Ok', style: 'cancel' },
+        {
+          text: 'Ok',
+          style: 'cancel',
+          onPress: () => this.setState({ isAlertActive: false }),
+        },
       ],
       { cancelable: true },
     )
