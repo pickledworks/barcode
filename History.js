@@ -6,16 +6,6 @@ import dbLayer from './dbLayer'
 import { ScrollView } from 'react-native-gesture-handler'
 
 export class History extends Component {
-  constructor(props) {
-    super(props)
-
-    this.state = { entries: [] }
-  }
-
-  componentDidMount() {
-    this.refreshData()
-  }
-
   seedData(count) {
     for (let i = 0; i < count; i++) {
       dbLayer.createEntry(
@@ -30,22 +20,14 @@ export class History extends Component {
     }
   }
 
-  refreshData() {
-    console.log('refreshing data...')
-    dbLayer.getEntries().then(entries => this.setState({ entries }))
-  }
-
   render() {
-    const { entries } = this.state
+    const { entries, onDeleteEntry } = this.props
 
     return (
       <View style={{ flex: 1 }}>
         <ScrollView style={styles.container}>
           {entries.map(({ id, scannedAt, content, type }) => (
-            <TouchableOpacity
-              key={id}
-              onPress={() => dbLayer.deleteEntry(id, this.refreshData())}
-            >
+            <TouchableOpacity key={id} onPress={() => onDeleteEntry(id)}>
               <View style={styles.entryContainer}>
                 <Text>
                   Scanned:

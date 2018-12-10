@@ -18,7 +18,7 @@ const createTableIfNotExists = () => {
   })
 }
 
-const createEntry = ({ scannedAt, content, type, success }) => {
+const createEntry = ({ scannedAt, content, type}, success) => {
   db.transaction(
     tx => {
       tx.executeSql(
