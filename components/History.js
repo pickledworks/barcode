@@ -1,9 +1,15 @@
-import React, { Component } from "react";
-import { StyleSheet, Text, View, TouchableOpacity, TouchableHighlight } from "react-native";
-import moment from "moment";
+import React, { Component } from 'react'
+import {
+  StyleSheet,
+  Text,
+  View,
+  TouchableOpacity,
+  TouchableHighlight,
+} from 'react-native'
+import moment from 'moment'
 
-import dbLayer from "../utils/dbLayer";
-import { ScrollView } from "react-native-gesture-handler";
+import dbLayer from '../utils/dbLayer'
+import { ScrollView } from 'react-native-gesture-handler'
 
 export class History extends Component {
   seedData(count) {
@@ -12,16 +18,16 @@ export class History extends Component {
         {
           scannedAt: new Date(),
           content: `${i}`,
-          type: 'string'
+          type: 'string',
         },
         null,
-        this.refreshData()
-      );
+        this.refreshData(),
+      )
     }
   }
 
   render() {
-    const { entries, onDeleteEntry, onPress } = this.props;
+    const { entries, onDeleteEntry, onPress } = this.props
 
     return (
       <View style={{ flex: 1 }}>
@@ -34,9 +40,7 @@ export class History extends Component {
               <View style={styles.entryContainer}>
                 <Text>
                   Scanned:
-                  {moment()
-                    .startOf(scannedAt)
-                    .fromNow()}
+                  {` ${moment().format('D/mm/YY LTS')}`}
                 </Text>
                 <Text>Content: {content}</Text>
                 <Text>Type: {type}</Text>
@@ -45,24 +49,23 @@ export class History extends Component {
           ))}
         </ScrollView>
       </View>
-    );
+    )
   }
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    marginHorizontal: 50
+    marginHorizontal: 50,
   },
   entryContainer: {
-    marginVertical: 10
+    marginVertical: 10,
   },
   text: {
     fontSize: 36,
     paddingTop: 10,
     paddingLeft: 50,
-  }
+  },
+})
 
-});
-
-export default History;
+export default History
