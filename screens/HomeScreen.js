@@ -45,19 +45,22 @@ export default class HomeScreen extends React.Component {
     )
 
     Alert.alert(
-      'Başarılıyla Okundu',
+      'Successfully saved',
       data,
       [
         {
-          text: 'Linke Git ',
+          text: 'Go to link',
           onPress: () => Linking.openURL(data),
         },
         {
-          text: 'Kopyala',
+          text: 'Copy as text',
           onPress: () => Clipboard.setString(data),
-          style: 'cancel',
         },
-        { text: 'Kaydetmeden çık', onPress: () => dbLayer.deleteLastEntry() },
+        {
+          text: 'Delete',
+          onPress: () => dbLayer.deleteLastEntry(this.refreshData()),
+        },
+        { text: 'Ok', style: 'cancel' },
       ],
       { cancelable: true },
     )
