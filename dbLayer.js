@@ -35,7 +35,7 @@ const getEntries = success => {
   return new Promise((resolve, reject) => {
     db.transaction(
       tx => {
-        tx.executeSql('select * from entries', [], (_, { rows: { _array } }) =>
+        tx.executeSql('select * from entries order by scannedAt DESC', [], (_, { rows: { _array } }) =>
           resolve(_array),
         )
       },
@@ -66,10 +66,21 @@ const deleteEntry = (id, success) => {
   )
 }
 
+const deleteLastEntry = (success) => {
+  db.transaction(
+    tx => {
+      tx.executeSql('delete from entries where id = (select max(id) from entries)')
+    },
+    error => console.log(`Error deleting last entry: `, error),
+    success,
+  )
+}
+
 export default {
   createTableIfNotExists,
   createEntry,
   getEntries,
   isLastEntry,
   deleteEntry,
+  deleteLastEntry,
 }

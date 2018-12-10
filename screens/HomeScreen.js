@@ -1,5 +1,5 @@
 import React, { Fragment } from 'react'
-import { Text, View, StyleSheet, ScrollView, Alert } from 'react-native'
+import { Text, View, StyleSheet, Alert, Linking } from 'react-native'
 import { BarCodeScanner, Permissions } from 'expo'
 
 import dbLayer from '../dbLayer'
@@ -27,34 +27,37 @@ export default class HomeScreen extends React.Component {
   handleBarCodeScanned = async ({ type, data }) => {
     this.refreshData()
 
-    const entries = await dbLayer.getEntries().then(data => data) || []
+    const entries = (await dbLayer.getEntries().then(data => data)) || []
 
-    const lastEntry = entries[entries.length - 1]
+    const lastEntry = entries[0]
 
     if (lastEntry && lastEntry.content === data) {
       return null
     }
 
-    dbLayer.createEntry({
-      scannedAt: new Date(),
-      content: data,
-      type: 'T',
-    })
+    dbLayer.createEntry(
+      {
+        scannedAt: new Date(),
+        content: data,
+        type: 'T',
+      },
+      this.refreshData(),
+    )
 
     Alert.alert(
-      'Başarılı',
-      `Okundu: ${data}`,
+      'Başarılıyla Okundu',
+      data,
       [
         {
           text: 'Linke Git ',
-          onPress: () => console.log('Ask me later pressed'),
+          onPress: () => Linking.openURL(data),
         },
         {
           text: 'Kopyala',
           onPress: () => console.log('Cancel Pressed'),
           style: 'cancel',
         },
-        { text: 'Kaydetmeden çık', onPress: () => console.log('OK Pressed') },
+        { text: 'Kaydetmeden çık', onPress: () => dbLayer.deleteLastEntry() },
       ],
       { cancelable: false },
     )
