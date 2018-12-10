@@ -1,130 +1,142 @@
-import React, { Fragment } from 'react'
-import { Text, View, StyleSheet, Alert, Linking, Clipboard } from 'react-native'
-import { BarCodeScanner, Permissions } from 'expo'
+import React, { Fragment } from "react";
+import {
+  Text,
+  View,
+  StyleSheet,
+  Alert,
+  Linking,
+  Clipboard
+} from "react-native";
+import { BarCodeScanner, Permissions } from "expo";
 
-import dbLayer from '../dbLayer'
-import specifyType from '../specifyType'
+import dbLayer from "../dbLayer";
+import specifyType from "../specifyType";
 
-import History from '../History'
+import History from "../History";
 
 export default class HomeScreen extends React.Component {
   state = {
     hasCameraPermission: null,
     entries: [],
-    isAlertActive: false,
-  }
+    isAlertActive: false
+  };
 
   async componentDidMount() {
-    const { status } = await Permissions.askAsync(Permissions.CAMERA)
+    const { status } = await Permissions.askAsync(Permissions.CAMERA);
 
-    this.refreshData()
+    this.refreshData();
 
-    this.setState({ hasCameraPermission: status === 'granted' })
+    this.setState({ hasCameraPermission: status === "granted" });
   }
 
   refreshData() {
-    dbLayer.getEntries().then(entries => this.setState({ entries }))
+    dbLayer.getEntries().then(entries => this.setState({ entries }));
   }
 
   handleBarCodeScanned = async ({ type, data }) => {
-    if (this.state.isAlertActive) return null
+    if (this.state.isAlertActive) return null;
 
-    this.refreshData()
+    this.refreshData();
 
-    const entries = (await dbLayer.getEntries().then(data => data)) || []
+    const entries = (await dbLayer.getEntries().then(data => data)) || [];
 
-    const lastEntry = entries[0]
+    const lastEntry = entries[0];
 
     if (lastEntry && lastEntry.content === data) {
-      return null
+      return null;
     }
 
     dbLayer.createEntry(
       {
         scannedAt: new Date(),
         content: data,
-        type: specifyType(data),
+        type: specifyType(data)
       },
-      this.refreshData(),
-    )
+      this.refreshData()
+    );
 
-    this.setState({ isAlertActive: true })
+    this.setState({ isAlertActive: true });
 
     Alert.alert(
-      'Successfully saved',
+      "Successfully saved",
       data,
       [
         {
-          text: 'Go to link',
+          text: "Go to link",
           onPress: () =>
-            this.setState({ isAlertActive: false }) && Linking.openURL(data),
+            this.setState({ isAlertActive: false }) && Linking.openURL(data)
         },
         {
-          text: 'Copy as text',
+          text: "Copy as text",
+          onPress: () =>
+            this.setState({ isAlertActive: false }) && Clipboard.setString(data)
+        },
+        {
+          text: "Delete",
           onPress: () =>
             this.setState({ isAlertActive: false }) &&
-            Clipboard.setString(data),
+            dbLayer.deleteLastEntry(this.refreshData())
         },
         {
-          text: 'Delete',
-          onPress: () =>
-            this.setState({ isAlertActive: false }) &&
-            dbLayer.deleteLastEntry(this.refreshData()),
-        },
-        {
-          text: 'Ok',
-          style: 'cancel',
-          onPress: () => this.setState({ isAlertActive: false }),
-        },
+          text: "Ok",
+          style: "cancel",
+          onPress: () => this.setState({ isAlertActive: false })
+        }
       ],
-      { cancelable: true },
-    )
-  }
+      { cancelable: true }
+    );
+  };
+
+  onPress = () => {
+    this.setState({ barCodeScannerShow: !barCodeScannerShow });
+  };
 
   render() {
-    const { entries, hasCameraPermission } = this.state
+    const { entries, hasCameraPermission, barCodeScannerShow } = this.state;
 
     if (hasCameraPermission === null) {
-      return <Text>Requesting for camera permission</Text>
+      return <Text>Requesting for camera permission</Text>;
     }
     if (hasCameraPermission === false) {
-      return <Text>No access to camera</Text>
+      return <Text>No access to camera</Text>;
     }
 
     return (
       <View
         style={{
           flex: 1,
-          flexDirection: 'column',
-          alignItems: 'stretch',
-          justifyContent: 'space-evenly',
+          flexDirection: "column",
+          alignItems: "stretch",
+          justifyContent: "space-evenly"
         }}
       >
-        <BarCodeScanner
-          onBarCodeScanned={this.handleBarCodeScanned}
-          style={styles.barCodeScanner}
-        />
-
+        {barCodeScannerShow && (
+          <BarCodeScanner
+            onBarCodeScanned={this.handleBarCodeScanned}
+            style={styles.barCodeScanner}
+          />
+        )}
         <History
+          onPress={this.onPress}
           entries={entries}
           onDeleteEntry={id => dbLayer.deleteEntry(id, this.refreshData())}
         />
       </View>
-    )
+    );
   }
 }
 
 const styles = StyleSheet.create({
   barCodeScanner: {
-    flex: 2,
+    flex: 2
   },
   text: {
-    color: 'black',
-    fontSize: 20,
+    color: "black",
+    fontSize: 20
   },
   scrollView: {
     flex: 1,
     margin: 10,
-    backgroundColor: 'gray',
-  },
-})
+    backgroundColor: "gray"
+  }
+});
