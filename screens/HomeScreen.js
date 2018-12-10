@@ -3,6 +3,7 @@ import { Text, View, StyleSheet, Alert, Linking, Clipboard } from 'react-native'
 import { BarCodeScanner, Permissions } from 'expo'
 
 import dbLayer from '../dbLayer'
+import specifyType from '../specifyType'
 
 import History from '../History'
 
@@ -42,7 +43,7 @@ export default class HomeScreen extends React.Component {
       {
         scannedAt: new Date(),
         content: data,
-        type: 'T',
+        type: specifyType(data),
       },
       this.refreshData(),
     )
